@@ -1,7 +1,5 @@
-// HomeScreen.js
-
+import { Ionicons } from "@expo/vector-icons";
 import React, { useContext, useMemo, useState } from "react";
-
 import {
   Image,
   SafeAreaView,
@@ -12,27 +10,22 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
-import { Ionicons } from "@expo/vector-icons";
-
+import colors from "../constants/colors";
 import { AuthContext } from "../context/AuthContext";
-
 import NotificacionesScreen from "./NotificacionesScreen";
 
 export default function HomeScreen({ navigation }) {
-
   const { user } = useContext(AuthContext);
 
   const [mostrarNotificaciones, setMostrarNotificaciones] = useState(false);
 
-  const esAdmin =
-    user?.rol === "presidente" ||
-    user?.rol === "secretario";
+  // ✅ Roles corregidos (consistentes con registro)
+  const ADMIN_ROLES = ["presidente", "secretario", "jefe_carrera"];
+  const esAdmin = ADMIN_ROLES.includes(user?.rol);
 
   const esDocente = user?.rol === "docente";
 
   const menus = useMemo(() => {
-
     if (esDocente) {
       return [
         {
@@ -49,7 +42,7 @@ export default function HomeScreen({ navigation }) {
         },
         {
           titulo: "Actividades",
-          icono: "clipboard",
+          icono: "document-text",
           color: "#0F766E",
           screen: "PlanTrabajo",
         },
@@ -68,7 +61,7 @@ export default function HomeScreen({ navigation }) {
           titulo: "Asistencia",
           icono: "people",
           color: "#2563EB",
-          screen: "AsistenciaAdmin", // ✅ CORRECTO
+          screen: "AsistenciaAdmin",
         },
         {
           titulo: "Minutas",
@@ -78,7 +71,7 @@ export default function HomeScreen({ navigation }) {
         },
         {
           titulo: "Actividades",
-          icono: "clipboard",
+          icono: "document-text",
           color: "#7C3AED",
           screen: "PlanTrabajo",
         },
@@ -111,19 +104,19 @@ export default function HomeScreen({ navigation }) {
         screen: "Calendario",
       },
     ];
-  }, [esAdmin, esDocente]);
+  }, [user?.rol, esAdmin, esDocente]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="light-content" backgroundColor="#0B1F3A" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
 
-      <ScrollView contentContainerStyle={styles.container}>
-
+      <ScrollView
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
         {/* HEADER */}
         <View style={styles.header}>
-
           <View style={styles.topHeader}>
-
             <View style={styles.userSection}>
               <Text style={styles.welcome}>Bienvenido(a)</Text>
               <Text style={styles.userName}>
@@ -131,18 +124,21 @@ export default function HomeScreen({ navigation }) {
               </Text>
 
               <View style={styles.roleBadge}>
-                <Ionicons name="shield-checkmark" size={14} color="#fff" />
+                <Ionicons name="shield-checkmark" size={14} color="#FFF" />
                 <Text style={styles.roleText}>{user?.rol}</Text>
               </View>
             </View>
 
             <View style={styles.actions}>
-
               <TouchableOpacity
                 style={styles.notificationButton}
                 onPress={() => setMostrarNotificaciones(true)}
               >
-                <Ionicons name="notifications-outline" size={24} color="#0B1F3A" />
+                <Ionicons
+                  name="notifications-outline"
+                  size={24}
+                  color="#0B1F3A"
+                />
                 <View style={styles.notificationDot} />
               </TouchableOpacity>
 
@@ -154,23 +150,28 @@ export default function HomeScreen({ navigation }) {
                   style={styles.avatar}
                 />
               </TouchableOpacity>
-
             </View>
-
           </View>
 
           {/* BANNER */}
           <View style={styles.banner}>
-            <View>
+            <View style={styles.bannerLeft}>
               <Text style={styles.bannerTitle}>Sistema Académico</Text>
               <Text style={styles.bannerSubtitle}>
-                Gestión de actividades institucionales
+                Gestión de actividades y control institucional
               </Text>
             </View>
 
-            <Ionicons name="school" size={40} color="#fff" />
+            <View style={styles.bannerIcon}>
+              <Ionicons name="school" size={38} color="#FFF" />
+            </View>
           </View>
+        </View>
 
+        {/* TITULO */}
+        <View style={styles.panelHeader}>
+          <Text style={styles.panelTitle}>Módulos del sistema</Text>
+          <Text style={styles.panelSubtitle}>Accesos rápidos</Text>
         </View>
 
         {/* CARDS */}
@@ -181,17 +182,23 @@ export default function HomeScreen({ navigation }) {
               style={styles.card}
               onPress={() => navigation.navigate(item.screen)}
             >
-              <View style={[styles.iconContainer, { backgroundColor: item.color }]}>
-                <Ionicons name={item.icono} size={30} color="#fff" />
+              <View
+                style={[
+                  styles.iconContainer,
+                  { backgroundColor: item.color },
+                ]}
+              >
+                <Ionicons name={item.icono} size={32} color="#FFF" />
               </View>
 
               <Text style={styles.cardText}>{item.titulo}</Text>
 
-              <Ionicons name="chevron-forward" size={18} color="#94A3B8" />
+              <View style={styles.cardArrow}>
+                <Ionicons name="arrow-forward" size={18} color="#94A3B8" />
+              </View>
             </TouchableOpacity>
           ))}
         </View>
-
       </ScrollView>
 
       {/* NOTIFICACIONES */}
@@ -204,19 +211,26 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-
-  safeArea: { flex: 1, backgroundColor: "#0B1F3A" },
+  safeArea: { flex: 1, backgroundColor: colors.primary },
 
   container: {
+    flexGrow: 1,
+    backgroundColor: colors.light,
     paddingBottom: 40,
-    backgroundColor: "#F1F5F9",
   },
 
   header: {
-    backgroundColor: "#0B1F3A",
-    padding: 20,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
+    backgroundColor: colors.primary,
+    paddingHorizontal: 22,
+    paddingTop: 18,
+    paddingBottom: 34,
+    borderBottomLeftRadius: 34,
+    borderBottomRightRadius: 34,
+    elevation: 8,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
   },
 
   topHeader: {
@@ -227,84 +241,155 @@ const styles = StyleSheet.create({
 
   userSection: { flex: 1 },
 
-  welcome: { color: "#ccc" },
+  welcome: { color: colors.border, fontSize: 14, letterSpacing: 0.5 },
 
-  userName: { color: "#fff", fontSize: 26, fontWeight: "bold" },
+  userName: { color: colors.white, fontSize: 26, fontWeight: "800", letterSpacing: 0.5 },
 
   roleBadge: {
-    flexDirection: "row",
     marginTop: 10,
-    backgroundColor: "#1E3A5F",
-    padding: 6,
-    borderRadius: 20,
+    flexDirection: "row",
+    backgroundColor: "rgba(255,255,255,0.15)",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 50,
     alignSelf: "flex-start",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
   },
 
-  roleText: { color: "#fff", marginLeft: 6 },
+  roleText: {
+    color: colors.white,
+    marginLeft: 6,
+    fontSize: 12,
+    fontWeight: "600",
+    textTransform: "uppercase",
+  },
 
-  actions: { flexDirection: "row", alignItems: "center" },
+  actions: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
 
   notificationButton: {
-    backgroundColor: "#fff",
-    padding: 10,
-    borderRadius: 15,
-    marginRight: 10,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
   },
 
   notificationDot: {
     position: "absolute",
-    top: 5,
-    right: 5,
-    width: 8,
-    height: 8,
-    backgroundColor: "red",
-    borderRadius: 4,
+    top: 10,
+    right: 10,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.danger,
+    borderWidth: 2,
+    borderColor: colors.primary,
   },
 
   avatar: {
-    width: 45,
-    height: 45,
-    borderRadius: 25,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    borderWidth: 2,
+    borderColor: colors.white,
   },
 
   banner: {
-    marginTop: 20,
-    backgroundColor: "#1E3A5F",
-    padding: 20,
-    borderRadius: 20,
+    marginTop: 28,
+    backgroundColor: colors.secondary,
+    borderRadius: 24,
+    padding: 24,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    elevation: 4,
+    shadowColor: colors.secondary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
   },
 
-  bannerTitle: { color: "#fff", fontSize: 20, fontWeight: "bold" },
+  bannerLeft: { flex: 1, paddingRight: 16 },
 
-  bannerSubtitle: { color: "#ccc" },
+  bannerTitle: { color: colors.white, fontSize: 22, fontWeight: "800", marginBottom: 4 },
+
+  bannerSubtitle: { color: "rgba(255,255,255,0.8)", fontSize: 13, lineHeight: 18 },
+
+  bannerIcon: {
+    width: 64,
+    height: 64,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  panelHeader: {
+    paddingHorizontal: 22,
+    marginTop: 32,
+    marginBottom: 20,
+  },
+
+  panelTitle: {
+    fontSize: 22,
+    fontWeight: "800",
+    color: colors.textDark,
+    marginBottom: 4,
+  },
+
+  panelSubtitle: {
+    fontSize: 14,
+    color: colors.gray,
+    fontWeight: "500",
+  },
 
   panel: {
-    padding: 15,
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
+    paddingHorizontal: 20,
   },
 
   card: {
     width: "47%",
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
+    borderRadius: 24,
     padding: 20,
-    borderRadius: 20,
-    marginBottom: 15,
-    alignItems: "center",
+    marginBottom: 20,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
   },
 
   iconContainer: {
-    padding: 15,
-    borderRadius: 20,
-    marginBottom: 10,
+    width: 56,
+    height: 56,
+    borderRadius: 18,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 16,
   },
 
   cardText: {
-    fontWeight: "bold",
-    marginBottom: 10,
+    fontSize: 16,
+    fontWeight: "700",
+    color: colors.textDark,
+  },
+
+  cardArrow: {
+    marginTop: 12,
+    alignSelf: "flex-end",
+    backgroundColor: colors.light,
+    padding: 6,
+    borderRadius: 12,
   },
 });

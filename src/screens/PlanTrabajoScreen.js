@@ -1,7 +1,4 @@
-// PlanTrabajoScreen.js
-
 import React, { useState } from "react";
-
 import {
   Alert,
   ScrollView,
@@ -11,15 +8,15 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
 import { Ionicons } from "@expo/vector-icons";
 
 import * as FileSystem from "expo-file-system";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 
-export default function PlanTrabajoScreen({ navigation }) {
+import colors from "../constants/colors";
 
+export default function PlanTrabajoScreen({ navigation }) {
   const [docente, setDocente] = useState("");
   const [periodo, setPeriodo] = useState("");
   const [departamento, setDepartamento] = useState("");
@@ -44,49 +41,39 @@ export default function PlanTrabajoScreen({ navigation }) {
 
   const generarPDF = async () => {
     try {
-
       const html = `
       <html>
       <body style="font-family: Arial; padding: 30px; color:#0F172A;">
-
       <h1>PLAN DE TRABAJO</h1>
-
       <h2>Información General</h2>
       <p><strong>Docente:</strong> ${docente}</p>
       <p><strong>Periodo:</strong> ${periodo}</p>
       <p><strong>Departamento:</strong> ${departamento}</p>
-
       <h2>Evento</h2>
       <p><strong>Evento:</strong> ${evento}</p>
       <p><strong>Lugar:</strong> ${lugar}</p>
       <p><strong>Fecha:</strong> ${fechaEvento}</p>
-
       <h2>Comisión</h2>
       <p><strong>Rol:</strong> ${rol}</p>
       <p><strong>Comisión:</strong> ${comision}</p>
-
       <h2>Actividades</h2>
       <ul>
         <li>${actividad1}</li>
         <li>${actividad2}</li>
         <li>${actividad3}</li>
       </ul>
-
       <h2>Checklist Operativo</h2>
       <p>${registro ? "☑" : "☐"} Registro realizado</p>
       <p>${logistica ? "☑" : "☐"} Logística completada</p>
       <p>${material ? "☑" : "☐"} Material preparado</p>
       <p>${evidencia ? "☑" : "☐"} Evidencias recopiladas</p>
-
       <h2>Observaciones</h2>
       <p>${observaciones}</p>
-
       </body>
       </html>
       `;
 
       const { uri } = await Print.printToFileAsync({ html });
-
       const fileName = `PlanTrabajo_${Date.now()}.pdf`;
       const newPath = FileSystem.documentDirectory + fileName;
 
@@ -96,9 +83,7 @@ export default function PlanTrabajoScreen({ navigation }) {
       });
 
       Alert.alert("PDF Guardado", "Documento generado correctamente");
-
       await Sharing.shareAsync(newPath);
-
     } catch (error) {
       console.log(error);
       Alert.alert("Error", "No se pudo generar el PDF");
@@ -108,7 +93,7 @@ export default function PlanTrabajoScreen({ navigation }) {
   const TaskItem = ({ title, value, onPress }) => (
     <TouchableOpacity style={styles.taskCard} onPress={onPress}>
       <View style={[styles.circle, value && styles.circleActive]}>
-        {value && <Ionicons name="checkmark" size={18} color="white" />}
+        {value && <Ionicons name="checkmark" size={16} color={colors.white} />}
       </View>
       <Text style={styles.taskText}>{title}</Text>
     </TouchableOpacity>
@@ -116,65 +101,70 @@ export default function PlanTrabajoScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-
-      <ScrollView showsVerticalScrollIndicator={false}>
-
-        {/* HEADER */}
-        <View style={styles.topBanner}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.navigate("Home")}
-          >
-            <Ionicons name="arrow-back" size={20} color="white" />
+      <View style={styles.header}>
+        <View style={styles.headerTop}>
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <Ionicons name="chevron-back" size={28} color={colors.white} />
           </TouchableOpacity>
-
-          <Text style={styles.bannerTitle}>Plan de Trabajo</Text>
-          <Text style={styles.bannerSubtitle}>Gestión Institucional</Text>
+          <Text style={styles.headerTitle}>Plan de Trabajo</Text>
+          <View style={{ width: 40 }} />
         </View>
+        <Text style={styles.subtitle}>Gestión Institucional de Actividades</Text>
+      </View>
 
-        {/* QUICK CARDS */}
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.quickContainer}>
           <View style={styles.quickCard}>
-            <Ionicons name="calendar" size={30} color="#2563EB" />
+            <View style={[styles.quickIconBox, { backgroundColor: "rgba(59, 130, 246, 0.15)" }]}>
+              <Ionicons name="calendar" size={24} color={colors.secondary} />
+            </View>
             <Text style={styles.quickText}>Eventos</Text>
           </View>
 
           <View style={styles.quickCard}>
-            <Ionicons name="people" size={30} color="#059669" />
+            <View style={[styles.quickIconBox, { backgroundColor: "rgba(16, 185, 129, 0.15)" }]}>
+              <Ionicons name="people" size={24} color={colors.success} />
+            </View>
             <Text style={styles.quickText}>Staff</Text>
           </View>
 
           <View style={styles.quickCard}>
-            <Ionicons name="checkmark-done" size={30} color="#EA580C" />
+            <View style={[styles.quickIconBox, { backgroundColor: "rgba(245, 158, 11, 0.15)" }]}>
+              <Ionicons name="checkmark-done" size={24} color={colors.warning} />
+            </View>
             <Text style={styles.quickText}>Checklist</Text>
           </View>
         </View>
 
-        {/* FORMULARIO */}
         <View style={styles.sectionCard}>
-          <TextInput placeholder="Nombre del docente" value={docente} onChangeText={setDocente} style={styles.input} />
-          <TextInput placeholder="Periodo" value={periodo} onChangeText={setPeriodo} style={styles.input} />
-          <TextInput placeholder="Departamento" value={departamento} onChangeText={setDepartamento} style={styles.input} />
+          <Text style={styles.sectionTitle}>Información General</Text>
+          <TextInput placeholder="Nombre del docente" placeholderTextColor={colors.gray} value={docente} onChangeText={setDocente} style={styles.input} />
+          <TextInput placeholder="Periodo" placeholderTextColor={colors.gray} value={periodo} onChangeText={setPeriodo} style={styles.input} />
+          <TextInput placeholder="Departamento" placeholderTextColor={colors.gray} value={departamento} onChangeText={setDepartamento} style={styles.input} />
         </View>
 
         <View style={styles.sectionCard}>
-          <TextInput placeholder="Evento" value={evento} onChangeText={setEvento} style={styles.input} />
-          <TextInput placeholder="Lugar" value={lugar} onChangeText={setLugar} style={styles.input} />
-          <TextInput placeholder="Fecha" value={fechaEvento} onChangeText={setFechaEvento} style={styles.input} />
+          <Text style={styles.sectionTitle}>Evento</Text>
+          <TextInput placeholder="Nombre del evento" placeholderTextColor={colors.gray} value={evento} onChangeText={setEvento} style={styles.input} />
+          <TextInput placeholder="Lugar" placeholderTextColor={colors.gray} value={lugar} onChangeText={setLugar} style={styles.input} />
+          <TextInput placeholder="Fecha" placeholderTextColor={colors.gray} value={fechaEvento} onChangeText={setFechaEvento} style={styles.input} />
         </View>
 
         <View style={styles.sectionCard}>
-          <TextInput placeholder="Rol" value={rol} onChangeText={setRol} style={styles.input} />
-          <TextInput placeholder="Comisión" value={comision} onChangeText={setComision} style={styles.input} />
+          <Text style={styles.sectionTitle}>Comisión</Text>
+          <TextInput placeholder="Rol" placeholderTextColor={colors.gray} value={rol} onChangeText={setRol} style={styles.input} />
+          <TextInput placeholder="Detalles de la Comisión" placeholderTextColor={colors.gray} value={comision} onChangeText={setComision} style={styles.input} />
         </View>
 
         <View style={styles.sectionCard}>
-          <TextInput placeholder="Actividad 1" value={actividad1} onChangeText={setActividad1} style={styles.input} />
-          <TextInput placeholder="Actividad 2" value={actividad2} onChangeText={setActividad2} style={styles.input} />
-          <TextInput placeholder="Actividad 3" value={actividad3} onChangeText={setActividad3} style={styles.input} />
+          <Text style={styles.sectionTitle}>Actividades</Text>
+          <TextInput placeholder="Actividad 1" placeholderTextColor={colors.gray} value={actividad1} onChangeText={setActividad1} style={styles.input} />
+          <TextInput placeholder="Actividad 2" placeholderTextColor={colors.gray} value={actividad2} onChangeText={setActividad2} style={styles.input} />
+          <TextInput placeholder="Actividad 3" placeholderTextColor={colors.gray} value={actividad3} onChangeText={setActividad3} style={styles.input} />
         </View>
 
         <View style={styles.sectionCard}>
+          <Text style={styles.sectionTitle}>Checklist Operativo</Text>
           <TaskItem title="Registro realizado" value={registro} onPress={() => setRegistro(!registro)} />
           <TaskItem title="Logística completada" value={logistica} onPress={() => setLogistica(!logistica)} />
           <TaskItem title="Material preparado" value={material} onPress={() => setMaterial(!material)} />
@@ -182,119 +172,177 @@ export default function PlanTrabajoScreen({ navigation }) {
         </View>
 
         <View style={styles.sectionCard}>
+          <Text style={styles.sectionTitle}>Observaciones</Text>
           <TextInput
             style={styles.textArea}
             multiline
-            placeholder="Observaciones..."
+            placeholder="Añadir observaciones..."
+            placeholderTextColor={colors.gray}
             value={observaciones}
             onChangeText={setObservaciones}
+            textAlignVertical="top"
           />
         </View>
-
-        <View style={{ height: 120 }} />
-
       </ScrollView>
 
-      {/* FAB PDF */}
       <TouchableOpacity style={styles.fab} onPress={generarPDF}>
-        <Ionicons name="document-text" size={30} color="white" />
+        <Ionicons name="document-text" size={28} color={colors.white} />
       </TouchableOpacity>
-
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-
-  container: { flex: 1, backgroundColor: "#E2E8F0" },
-
-  topBanner: {
-    backgroundColor: "#0F172A",
-    padding: 30,
-    borderBottomLeftRadius: 35,
-    borderBottomRightRadius: 35,
+  container: {
+    flex: 1,
+    backgroundColor: colors.light,
   },
-
-  backButton: {
-    backgroundColor: "rgba(255,255,255,0.15)",
-    width: 45,
-    height: 45,
-    borderRadius: 14,
-    justifyContent: "center",
+  header: {
+    backgroundColor: colors.primary,
+    paddingTop: 60,
+    paddingHorizontal: 20,
+    paddingBottom: 30,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+    elevation: 8,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    zIndex: 10,
+  },
+  headerTop: {
+    flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20,
+    justifyContent: "space-between",
   },
-
-  bannerTitle: { color: "white", fontSize: 32, fontWeight: "bold" },
-  bannerSubtitle: { color: "#CBD5E1", marginTop: 6 },
-
+  backButton: {
+    padding: 8,
+  },
+  headerTitle: {
+    color: colors.white,
+    fontSize: 22,
+    fontWeight: "bold",
+  },
+  subtitle: {
+    color: colors.border,
+    marginTop: 12,
+    fontSize: 15,
+    textAlign: "center",
+  },
+  scrollContent: {
+    paddingTop: 10,
+    paddingBottom: 100,
+  },
   quickContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    margin: 15,
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    marginBottom: 10,
   },
-
   quickCard: {
-    backgroundColor: "white",
-    padding: 20,
+    backgroundColor: colors.white,
+    padding: 16,
     borderRadius: 20,
     alignItems: "center",
-    width: "30%",
+    width: "31%",
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
   },
-
-  sectionCard: {
-    backgroundColor: "white",
-    margin: 15,
-    padding: 15,
-    borderRadius: 20,
-  },
-
-  input: {
-    backgroundColor: "#F8FAFC",
-    borderWidth: 1,
-    borderColor: "#CBD5E1",
+  quickIconBox: {
+    width: 48,
+    height: 48,
     borderRadius: 16,
-    padding: 14,
-    marginBottom: 12,
-  },
-
-  textArea: {
-    backgroundColor: "#F8FAFC",
-    borderWidth: 1,
-    borderColor: "#CBD5E1",
-    borderRadius: 16,
-    padding: 14,
-    minHeight: 120,
-  },
-
-  taskCard: {
-    flexDirection: "row",
-    padding: 12,
-  },
-
-  circle: {
-    width: 25,
-    height: 25,
-    borderRadius: 12,
-    borderWidth: 2,
-    marginRight: 10,
-  },
-
-  circleActive: {
-    backgroundColor: "#2563EB",
-  },
-
-  taskText: { fontSize: 14 },
-
-  fab: {
-    position: "absolute",
-    bottom: 20,
-    right: 20,
-    backgroundColor: "#2563EB",
-    width: 65,
-    height: 65,
-    borderRadius: 33,
     justifyContent: "center",
     alignItems: "center",
+    marginBottom: 10,
+  },
+  quickText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: colors.textDark,
+  },
+  sectionCard: {
+    backgroundColor: colors.white,
+    marginHorizontal: 20,
+    marginTop: 16,
+    padding: 20,
+    borderRadius: 24,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: colors.textDark,
+    marginBottom: 16,
+  },
+  input: {
+    backgroundColor: colors.light,
+    borderWidth: 1,
+    borderColor: colors.grayLight,
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 12,
+    fontSize: 15,
+    color: colors.textDark,
+  },
+  textArea: {
+    backgroundColor: colors.light,
+    borderWidth: 1,
+    borderColor: colors.grayLight,
+    borderRadius: 14,
+    padding: 14,
+    minHeight: 120,
+    fontSize: 15,
+    color: colors.textDark,
+  },
+  taskCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.grayLight,
+  },
+  circle: {
+    width: 26,
+    height: 26,
+    borderRadius: 8, // Square-ish modern checkbox
+    borderWidth: 2,
+    borderColor: colors.gray,
+    marginRight: 12,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  circleActive: {
+    backgroundColor: colors.secondary,
+    borderColor: colors.secondary,
+  },
+  taskText: {
+    fontSize: 15,
+    color: colors.textDark,
+    fontWeight: "500",
+  },
+  fab: {
+    position: "absolute",
+    bottom: 30,
+    right: 24,
+    backgroundColor: colors.warning, // Highlight action
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 6,
+    shadowColor: colors.warning,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
   },
 });

@@ -1,40 +1,29 @@
 import React, { useEffect, useState } from "react";
-
 import {
-    Alert,
-    Linking,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  Linking,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+
+import { apiUrl } from "../config/api";
+import colors from "../constants/colors";
 
 export default function ReportesScreen({ navigation }) {
-
   const [reportes, setReportes] = useState([]);
 
-  // OBTENER REPORTES DESDE BD
   const obtenerReportes = async () => {
-
     try {
-
-      const response = await fetch(
-        "http://10.10.1.52/academia/api/reportes.php"
-      );
-
+      const response = await fetch(apiUrl("reportes.php"));
       const data = await response.json();
-
       setReportes(data);
-
     } catch (error) {
-
       console.log(error);
-
-      Alert.alert(
-        "Error",
-        "No se pudieron cargar los reportes"
-      );
+      Alert.alert("Error", "No se pudieron cargar los reportes");
     }
   };
 
@@ -42,201 +31,205 @@ export default function ReportesScreen({ navigation }) {
     obtenerReportes();
   }, []);
 
-  // ABRIR DOCUMENTO
   const abrirDocumento = (url) => {
-
     if (!url) {
       Alert.alert("Error", "Documento no disponible");
       return;
     }
-
     Linking.openURL(url);
   };
 
   return (
-
     <View style={styles.container}>
-
-      {/* HEADER */}
       <View style={styles.header}>
-
-        <Text style={styles.title}>
-          Reportes Académicos
-        </Text>
-
-        <Text style={styles.subtitle}>
-          Documentos generados del sistema
-        </Text>
-
+        <View style={styles.headerTop}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Ionicons name="chevron-back" size={28} color={colors.white} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Reportes</Text>
+          <View style={{ width: 40 }} />
+        </View>
+        <Text style={styles.subtitle}>Documentos generados del sistema</Text>
       </View>
 
-      {/* BOTÓN REGRESO */}
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() =>
-          navigation.navigate("Home")
-        }
-      >
-
-        <Text style={styles.backText}>
-          ← Inicio
-        </Text>
-
-      </TouchableOpacity>
-
-      {/* LISTA */}
-      <ScrollView style={styles.list}>
-
-        {reportes.length === 0 ? (
-
-          <Text style={styles.empty}>
-            No hay reportes disponibles
-          </Text>
-
-        ) : (
-
-          reportes.map((item) => (
-
-            <View
-              key={item.id}
-              style={styles.card}
-            >
-
-              <Text style={styles.docTitle}>
-                📄 {item.titulo}
-              </Text>
-
-              <Text style={styles.info}>
-                Fecha: {item.fecha}
-              </Text>
-
-              <Text style={styles.info}>
-                Tipo: {item.tipo}
-              </Text>
-
-              <Text
-                style={
-                  item.estado === "nuevo"
-                    ? styles.new
-                    : styles.viewed
-                }
-              >
-                Estado: {item.estado}
-              </Text>
-
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() =>
-                  abrirDocumento(item.url)
-                }
-              >
-
-                <Text style={styles.buttonText}>
-                  Abrir documento
-                </Text>
-
-              </TouchableOpacity>
-
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <View style={styles.section}>
+          {reportes.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <Ionicons name="document-text-outline" size={64} color={colors.grayLight} />
+              <Text style={styles.emptyText}>No hay reportes disponibles</Text>
             </View>
+          ) : (
+            reportes.map((item) => (
+              <View key={item.id} style={styles.card}>
+                <View style={styles.cardHeader}>
+                  <View style={styles.titleRow}>
+                    <Ionicons name="document-text" size={22} color={colors.primary} style={{ marginRight: 8 }} />
+                    <Text style={styles.docTitle} numberOfLines={2}>
+                      {item.titulo}
+                    </Text>
+                  </View>
+                  <View style={[styles.statusBadge, item.estado === "nuevo" ? styles.badgeNew : styles.badgeViewed]}>
+                    <Text style={item.estado === "nuevo" ? styles.statusTextNew : styles.statusTextViewed}>
+                      {item.estado.toUpperCase()}
+                    </Text>
+                  </View>
+                </View>
 
-          ))
+                <View style={styles.infoRow}>
+                  <Ionicons name="calendar-outline" size={16} color={colors.gray} style={styles.infoIcon} />
+                  <Text style={styles.info}>{item.fecha}</Text>
+                </View>
 
-        )}
+                <View style={styles.infoRow}>
+                  <Ionicons name="folder-open-outline" size={16} color={colors.gray} style={styles.infoIcon} />
+                  <Text style={styles.info}>{item.tipo}</Text>
+                </View>
 
+                <TouchableOpacity style={styles.button} onPress={() => abrirDocumento(item.url)}>
+                  <Text style={styles.buttonText}>Abrir documento</Text>
+                  <Ionicons name="open-outline" size={18} color={colors.white} style={{ marginLeft: 8 }} />
+                </TouchableOpacity>
+              </View>
+            ))
+          )}
+        </View>
       </ScrollView>
-
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-
   container: {
     flex: 1,
-    backgroundColor: "#F1F5F9",
+    backgroundColor: colors.light,
   },
-
   header: {
-    backgroundColor: "#1E3A8A",
-    padding: 25,
-    borderBottomLeftRadius: 25,
-    borderBottomRightRadius: 25,
+    backgroundColor: colors.primary,
+    paddingTop: 60,
+    paddingHorizontal: 20,
+    paddingBottom: 30,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+    elevation: 8,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    zIndex: 10,
   },
-
-  title: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "bold",
+  headerTop: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
-
-  subtitle: {
-    color: "#DBEAFE",
-    marginTop: 5,
-  },
-
   backButton: {
-    padding: 15,
+    padding: 8,
   },
-
-  backText: {
-    color: "#2563EB",
+  headerTitle: {
+    color: colors.white,
+    fontSize: 22,
     fontWeight: "bold",
-    fontSize: 16,
   },
-
-  list: {
-    padding: 15,
+  subtitle: {
+    color: colors.border,
+    marginTop: 12,
+    fontSize: 15,
+    textAlign: "center",
   },
-
+  scrollContent: {
+    paddingTop: 20,
+    paddingBottom: 40,
+  },
+  section: {
+    paddingHorizontal: 20,
+  },
   card: {
-    backgroundColor: "#fff",
-    padding: 18,
-    borderRadius: 18,
-    marginBottom: 15,
-    elevation: 4,
+    backgroundColor: colors.white,
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 16,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
   },
-
+  cardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 16,
+  },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    flex: 1,
+    marginRight: 10,
+  },
   docTitle: {
     fontSize: 17,
+    fontWeight: "800",
+    color: colors.textDark,
+    flex: 1,
+  },
+  statusBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  badgeNew: {
+    backgroundColor: "rgba(220, 38, 38, 0.15)", // Red light
+  },
+  badgeViewed: {
+    backgroundColor: "rgba(16, 185, 129, 0.15)", // Green light
+  },
+  statusTextNew: {
+    color: "#DC2626",
+    fontSize: 12,
     fontWeight: "bold",
-    color: "#1E293B",
+  },
+  statusTextViewed: {
+    color: colors.success,
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 8,
   },
-
+  infoIcon: {
+    marginRight: 8,
+    width: 20,
+  },
   info: {
-    color: "#475569",
-    marginBottom: 5,
+    fontSize: 14,
+    color: colors.textDark,
   },
-
-  new: {
-    color: "#DC2626",
-    fontWeight: "bold",
-    marginTop: 5,
-  },
-
-  viewed: {
-    color: "#16A34A",
-    fontWeight: "bold",
-    marginTop: 5,
-  },
-
   button: {
-    marginTop: 12,
-    backgroundColor: "#2563EB",
-    padding: 12,
-    borderRadius: 10,
+    flexDirection: "row",
+    marginTop: 16,
+    backgroundColor: colors.primary,
+    paddingVertical: 14,
+    borderRadius: 14,
+    justifyContent: "center",
+    alignItems: "center",
   },
-
   buttonText: {
-    color: "#fff",
-    textAlign: "center",
+    color: colors.white,
     fontWeight: "bold",
+    fontSize: 15,
   },
-
-  empty: {
-    textAlign: "center",
-    marginTop: 50,
-    color: "#64748B",
+  emptyContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 60,
   },
-
+  emptyText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: colors.gray,
+    fontWeight: "500",
+  },
 });

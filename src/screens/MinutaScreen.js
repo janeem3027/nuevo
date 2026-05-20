@@ -9,17 +9,15 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 import * as DocumentPicker from "expo-document-picker";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 
-
 // 🔵 API
 import { apiUrl } from "../config/api";
-
-
-
+import colors from "../constants/colors";
 export default function MinutaScreen({ navigation }) {
   const [titulo, setTitulo] = useState("");
   const [lugar, setLugar] = useState("");
@@ -519,393 +517,391 @@ export default function MinutaScreen({ navigation }) {
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.content}
-      showsVerticalScrollIndicator={false}
-    >
-      <TouchableOpacity style={styles.btnBack} onPress={() => navigation.goBack()}>
-        <Text style={styles.textBtn}>Regresar</Text>
-      </TouchableOpacity>
-
-      <View style={styles.headerScreen}>
-        <Text style={styles.screenTitle}>Minuta de Academia</Text>
-        <Text style={styles.screenSubtitle}>
-          Registro y generación de documento académico
-        </Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.headerTop}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Ionicons name="chevron-back" size={28} color={colors.white} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Minuta de Academia</Text>
+          <View style={{ width: 40 }} />
+        </View>
+        <Text style={styles.subtitle}>Registro y generación de documento</Text>
       </View>
 
-      <View style={styles.formContainer}>
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Datos generales</Text>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <View style={styles.formContainer}>
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Datos Generales</Text>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Título de la minuta"
-            placeholderTextColor="#64748b"
-            value={titulo}
-            onChangeText={setTitulo}
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Lugar, ejemplo: Mixquiahuala de Juárez, Hidalgo"
-            placeholderTextColor="#64748b"
-            value={lugar}
-            onChangeText={setLugar}
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Fecha, ejemplo: 21 de enero de 2026"
-            placeholderTextColor="#64748b"
-            value={fecha}
-            onChangeText={setFecha}
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Hora, ejemplo: 11:00 horas"
-            placeholderTextColor="#64748b"
-            value={hora}
-            onChangeText={setHora}
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Tipo de sesión, ejemplo: Ordinaria"
-            placeholderTextColor="#64748b"
-            value={tipoSesion}
-            onChangeText={setTipoSesion}
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Número de sesión, ejemplo: 01"
-            placeholderTextColor="#64748b"
-            value={numeroSesion}
-            onChangeText={setNumeroSesion}
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Ciclo, ejemplo: enero - junio 2026"
-            placeholderTextColor="#64748b"
-            value={ciclo}
-            onChangeText={setCiclo}
-          />
-        </View>
-
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Lectura y aprobación del día</Text>
-
-          <TextInput
-            style={[styles.input, styles.textArea]}
-            placeholder="Escribe los puntos del orden del día"
-            placeholderTextColor="#64748b"
-            value={lectura}
-            onChangeText={setLectura}
-            multiline
-            textAlignVertical="top"
-          />
-        </View>
-
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Acuerdos</Text>
-
-          <TextInput
-            style={[styles.input, styles.textArea]}
-            placeholder="Escribe los acuerdos de la sesión"
-            placeholderTextColor="#64748b"
-            value={acuerdos}
-            onChangeText={setAcuerdos}
-            multiline
-            textAlignVertical="top"
-          />
-        </View>
-
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Avisos del jefe de carrera</Text>
-
-          <TextInput
-            style={[styles.input, styles.textArea]}
-            placeholder="Escribe los avisos importantes"
-            placeholderTextColor="#64748b"
-            value={avisos}
-            onChangeText={setAvisos}
-            multiline
-            textAlignVertical="top"
-          />
-        </View>
-
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Lista de asistencia</Text>
-
-          <View style={styles.row}>
             <TextInput
-              style={[styles.input, styles.inputDocente]}
-              placeholder="Nombre completo del docente"
-              placeholderTextColor="#64748b"
-              value={docenteNombre}
-              onChangeText={setDocenteNombre}
+              style={styles.input}
+              placeholder="Título de la minuta"
+              placeholderTextColor={colors.gray}
+              value={titulo}
+              onChangeText={setTitulo}
             />
 
-            <TouchableOpacity style={styles.btnAgregar} onPress={agregarDocente}>
-              <Text style={styles.textBtn}>Agregar</Text>
-            </TouchableOpacity>
+            <TextInput
+              style={styles.input}
+              placeholder="Lugar (ej. Mixquiahuala)"
+              placeholderTextColor={colors.gray}
+              value={lugar}
+              onChangeText={setLugar}
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Fecha (ej. 21 de enero de 2026)"
+              placeholderTextColor={colors.gray}
+              value={fecha}
+              onChangeText={setFecha}
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Hora (ej. 11:00 horas)"
+              placeholderTextColor={colors.gray}
+              value={hora}
+              onChangeText={setHora}
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Tipo de sesión (ej. Ordinaria)"
+              placeholderTextColor={colors.gray}
+              value={tipoSesion}
+              onChangeText={setTipoSesion}
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Número de sesión (ej. 01)"
+              placeholderTextColor={colors.gray}
+              value={numeroSesion}
+              onChangeText={setNumeroSesion}
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Ciclo (ej. enero - junio 2026)"
+              placeholderTextColor={colors.gray}
+              value={ciclo}
+              onChangeText={setCiclo}
+            />
           </View>
 
-          {docentes.map((docente, index) => (
-            <View key={index} style={styles.docenteItem}>
-              <Text style={styles.docenteText}>{docente}</Text>
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Lectura y Aprobación del Día</Text>
 
-              <TouchableOpacity onPress={() => eliminarDocente(index)}>
-                <Text style={styles.eliminarText}>Eliminar</Text>
+            <TextInput
+              style={[styles.input, styles.textArea]}
+              placeholder="Escribe los puntos del orden del día"
+              placeholderTextColor={colors.gray}
+              value={lectura}
+              onChangeText={setLectura}
+              multiline
+              textAlignVertical="top"
+            />
+          </View>
+
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Acuerdos</Text>
+
+            <TextInput
+              style={[styles.input, styles.textArea]}
+              placeholder="Escribe los acuerdos de la sesión"
+              placeholderTextColor={colors.gray}
+              value={acuerdos}
+              onChangeText={setAcuerdos}
+              multiline
+              textAlignVertical="top"
+            />
+          </View>
+
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Avisos del Jefe de Carrera</Text>
+
+            <TextInput
+              style={[styles.input, styles.textArea]}
+              placeholder="Escribe los avisos importantes"
+              placeholderTextColor={colors.gray}
+              value={avisos}
+              onChangeText={setAvisos}
+              multiline
+              textAlignVertical="top"
+            />
+          </View>
+
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Lista de Asistencia</Text>
+
+            <View style={styles.row}>
+              <TextInput
+                style={[styles.input, { flex: 1, marginBottom: 0 }]}
+                placeholder="Nombre completo del docente"
+                placeholderTextColor={colors.gray}
+                value={docenteNombre}
+                onChangeText={setDocenteNombre}
+              />
+
+              <TouchableOpacity style={styles.btnAgregar} onPress={agregarDocente}>
+                <Ionicons name="add" size={24} color={colors.white} />
               </TouchableOpacity>
             </View>
-          ))}
+
+            {docentes.length > 0 && (
+              <View style={styles.docentesList}>
+                {docentes.map((docente, index) => (
+                  <View key={index} style={styles.docenteItem}>
+                    <Ionicons name="person-outline" size={18} color={colors.primary} style={{ marginRight: 8 }} />
+                    <Text style={styles.docenteText}>{docente}</Text>
+                    <TouchableOpacity onPress={() => eliminarDocente(index)} style={styles.btnEliminar}>
+                      <Ionicons name="trash-outline" size={18} color={colors.warning} />
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
+            )}
+          </View>
+
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Firmas Finales</Text>
+
+            <TextInput
+              style={styles.input}
+              placeholder="Presidente de academia"
+              placeholderTextColor={colors.gray}
+              value={presidenteAcademia}
+              onChangeText={setPresidenteAcademia}
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Secretaria de academia"
+              placeholderTextColor={colors.gray}
+              value={secretariaAcademia}
+              onChangeText={setSecretariaAcademia}
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Jefe de división"
+              placeholderTextColor={colors.gray}
+              value={jefeDivision}
+              onChangeText={setJefeDivision}
+            />
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* FIXED BOTTOM ACTION BAR */}
+      <View style={styles.bottomBar}>
+        <View style={styles.fileRow}>
+          <TouchableOpacity style={styles.btnSecondary} onPress={seleccionarArchivo}>
+            <Ionicons name="attach" size={20} color={colors.primary} />
+            <Text style={styles.textSecondary}>Adjuntar Archivo</Text>
+          </TouchableOpacity>
+          {archivo && (
+            <Text style={styles.fileText} numberOfLines={1} ellipsizeMode="middle">
+              {archivo.name}
+            </Text>
+          )}
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Firmas finales</Text>
+        <View style={styles.mainActionRow}>
+          <TouchableOpacity style={[styles.btnAction, styles.btnSave]} onPress={guardarMinuta}>
+            <Ionicons name="save-outline" size={20} color={colors.white} />
+            <Text style={styles.textBtn}>Guardar</Text>
+          </TouchableOpacity>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Nombre del presidente de academia"
-            placeholderTextColor="#64748b"
-            value={presidenteAcademia}
-            onChangeText={setPresidenteAcademia}
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Nombre de la secretaria de academia"
-            placeholderTextColor="#64748b"
-            value={secretariaAcademia}
-            onChangeText={setSecretariaAcademia}
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Nombre del jefe de división"
-            placeholderTextColor="#64748b"
-            value={jefeDivision}
-            onChangeText={setJefeDivision}
-          />
+          <TouchableOpacity style={[styles.btnAction, styles.btnPdf]} onPress={generarPDF}>
+            <Ionicons name="document-text-outline" size={20} color={colors.white} />
+            <Text style={styles.textBtn}>PDF</Text>
+          </TouchableOpacity>
         </View>
       </View>
-
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={styles.btnSecondary} onPress={seleccionarArchivo}>
-          <Text style={styles.textBtn}>Agregar archivo</Text>
-        </TouchableOpacity>
-
-        {archivo && (
-          <Text style={styles.fileText}>Archivo agregado: {archivo.name}</Text>
-        )}
-
-        <TouchableOpacity style={styles.btnPrimary} onPress={guardarMinuta}>
-          <Text style={styles.textBtn}>Guardar información</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.btnPdf} onPress={generarPDF}>
-          <Text style={styles.textBtn}>Generar PDF</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#eef4ff",
+    backgroundColor: colors.light,
   },
-
-  content: {
-    padding: 22,
-    paddingBottom: 45,
+  header: {
+    backgroundColor: colors.primary,
+    paddingTop: 60,
+    paddingHorizontal: 20,
+    paddingBottom: 30,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+    elevation: 8,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    zIndex: 10,
   },
-
-  btnBack: {
-    backgroundColor: "#1e3a8a",
-    padding: 13,
-    borderRadius: 10,
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.12,
-    shadowRadius: 4,
-    elevation: 3,
+  headerTop: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
-
-  headerScreen: {
-    backgroundColor: "#1e3a8a",
-    padding: 20,
-    borderRadius: 16,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: "#bfdbfe",
+  backButton: {
+    padding: 8,
   },
-
-  screenTitle: {
-    color: "#ffffff",
+  headerTitle: {
+    color: colors.white,
     fontSize: 22,
-    fontWeight: "800",
-    textAlign: "center",
-    marginBottom: 4,
+    fontWeight: "bold",
   },
-
-  screenSubtitle: {
-    color: "#dbeafe",
-    fontSize: 14,
-    textAlign: "center",
-    fontWeight: "500",
-  },
-
-  formContainer: {
-    backgroundColor: "#eef4ff",
-  },
-
-  card: {
-    backgroundColor: "#ffffff",
-    padding: 20,
-    borderRadius: 16,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: "#bfdbfe",
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 5,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    elevation: 3,
-  },
-
-  cardTitle: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: "#1e3a8a",
-    marginBottom: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: "#dbeafe",
-    paddingBottom: 8,
-  },
-
-  input: {
-    backgroundColor: "#f8fbff",
-    padding: 14,
-    borderRadius: 10,
-    marginBottom: 13,
-    borderWidth: 1,
-    borderColor: "#cbd5e1",
+  subtitle: {
+    color: colors.border,
+    marginTop: 12,
     fontSize: 15,
-    color: "#111827",
+    textAlign: "center",
   },
-
+  content: {
+    padding: 20,
+    paddingBottom: 160, // Padding for fixed bottom bar
+  },
+  formContainer: {
+    marginTop: 10,
+  },
+  card: {
+    backgroundColor: colors.white,
+    borderRadius: 24,
+    padding: 24,
+    marginBottom: 20,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: colors.textDark,
+    marginBottom: 16,
+  },
+  input: {
+    backgroundColor: colors.light,
+    borderWidth: 1,
+    borderColor: colors.grayLight,
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 12,
+    fontSize: 15,
+    color: colors.textDark,
+  },
   textArea: {
-    minHeight: 125,
+    minHeight: 120,
+    paddingTop: 14,
   },
-
   row: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
   },
-
-  inputDocente: {
-    flex: 1,
-    marginBottom: 0,
-  },
-
   btnAgregar: {
-    backgroundColor: "#2563eb",
-    paddingVertical: 14,
-    paddingHorizontal: 18,
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    backgroundColor: colors.success,
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft: 10,
   },
-
+  docentesList: {
+    marginTop: 16,
+    backgroundColor: colors.light,
+    borderRadius: 14,
+    padding: 8,
+  },
   docenteItem: {
-    backgroundColor: "#eff6ff",
-    padding: 13,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.white,
+    padding: 12,
     borderRadius: 10,
-    marginTop: 10,
+    marginBottom: 8,
     borderWidth: 1,
-    borderColor: "#bfdbfe",
+    borderColor: colors.grayLight,
+  },
+  docenteText: {
+    flex: 1,
+    fontSize: 14,
+    color: colors.textDark,
+  },
+  btnEliminar: {
+    padding: 4,
+  },
+  bottomBar: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: colors.white,
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: Platform.OS === "ios" ? 34 : 20,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    elevation: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+  },
+  fileRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  btnSecondary: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(59, 130, 246, 0.1)", // Primary light
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    marginRight: 12,
+  },
+  textSecondary: {
+    color: colors.primary,
+    fontWeight: "600",
+    marginLeft: 4,
+  },
+  fileText: {
+    flex: 1,
+    color: colors.gray,
+    fontSize: 13,
+  },
+  mainActionRow: {
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  btnAction: {
+    flex: 1,
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 14,
+    borderRadius: 14,
   },
-
-  docenteText: {
-    fontSize: 14,
-    color: "#1e293b",
-    fontWeight: "600",
+  btnSave: {
+    backgroundColor: colors.primary,
+    marginRight: 10,
   },
-
-  eliminarText: {
-    color: "#dc2626",
-    fontWeight: "700",
-  },
-
-  buttonsContainer: {
-    marginTop: 12,
-    paddingTop: 22,
-    borderTopWidth: 1,
-    borderTopColor: "#bfdbfe",
-  },
-
-  btnPrimary: {
-    backgroundColor: "#1d4ed8",
-    padding: 15,
-    borderRadius: 10,
-    marginTop: 13,
-    shadowColor: "#000",
-    shadowOpacity: 0.12,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-
-  btnSecondary: {
-    backgroundColor: "#3b82f6",
-    padding: 15,
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.12,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-
   btnPdf: {
-    backgroundColor: "#0f172a",
-    padding: 15,
-    borderRadius: 10,
-    marginTop: 13,
-    shadowColor: "#000",
-    shadowOpacity: 0.14,
-    shadowRadius: 4,
-    elevation: 3,
+    backgroundColor: colors.warning, // Highlight action
   },
-
   textBtn: {
-    color: "#ffffff",
-    textAlign: "center",
-    fontWeight: "700",
+    color: colors.white,
+    fontWeight: "bold",
     fontSize: 15,
-    letterSpacing: 0.3,
-  },
-
-  fileText: {
-    marginTop: 10,
-    marginBottom: 5,
-    color: "#334155",
-    fontSize: 14,
-    textAlign: "center",
-    fontWeight: "500",
+    marginLeft: 8,
   },
 });
